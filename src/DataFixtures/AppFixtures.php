@@ -79,7 +79,7 @@ class AppFixtures extends Fixture
                     ->setContent($faker->paragraphs(4, true))
                     ->setPublic($faker->boolean(50))
                     ->setViews($faker->numberBetween(100, 10000))
-                    ->setAuthor($user)
+                    ->setCreator($user)
                     ->setCategory($faker->randomElement($categoryArray))
                     ;          
                 $manager->persist($note);

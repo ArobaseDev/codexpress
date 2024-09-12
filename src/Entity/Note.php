@@ -46,7 +46,7 @@ class Note
 
     #[ORM\ManyToOne(inversedBy: 'notes')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $author = null;
+    private ?User $creator = null;
 
     #[ORM\ManyToOne(inversedBy: 'note')]
     #[ORM\JoinColumn(nullable: false)]
@@ -191,14 +191,14 @@ class Note
         return $this;
     }
 
-    public function getAuthor(): ?User
+    public function getCreator(): ?User
     {
-        return $this->author;
+        return $this->creator;
     }
 
-    public function setAuthor(?User $author): static
+    public function setCreator(?User $creator): static
     {
-        $this->author = $author;
+        $this->creator = $creator;
 
         return $this;
     }
