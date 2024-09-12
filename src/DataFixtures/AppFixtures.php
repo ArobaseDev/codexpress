@@ -3,9 +3,11 @@
 namespace App\DataFixtures;
 
 use Faker\Factory;
+use App\Entity\Like;
 use App\Entity\Note;
 use App\Entity\User;
 use App\Entity\Category;
+use App\Entity\Network;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -58,18 +60,24 @@ class AppFixtures extends Fixture
             $manager->persist($category);
         }
 
+        $users = []; //  Stockage des utilisateurs dans un tableau pour les likes
+        $notes = []; //  
+
         // Création de 10 utilisateurs aléatoires
         for ($i = 0; $i < 10; $i++) {
             $username = $faker->userName;
             $usernameFinal = $this->slug->slug($username);
+        //    $userImage = $faker->
             $user = new User();
             $user
                 ->setEmail($usernameFinal .'@'. $faker->freeEmailDomain)
                 ->setUsername($username)
                 ->setPassword($this->hash->hashPassword($user, 'admin'))
-                ->setRoles(['ROLE_USER']);      
+                ->setRoles(['ROLE_USER'])
+                ->setImage("https://avatar.iran.liara.run/public");  // Sachant que l'utilisateur peux ne pas avoir d'image de profil. On peux ici créér la logique pour les Network et les Likes.    
                 $manager->persist($user);
-
+                $users[] = $user;  // Ajout de l'utilisateur dans le tableau users
+        }
         //     Création de 10 notes aléatoires
             for ($j = 0; $j < 10; $j++) {
                 $note = new Note();
@@ -83,8 +91,48 @@ class AppFixtures extends Fixture
                     ->setCategory($faker->randomElement($categoryArray))
                     ;          
                 $manager->persist($note);
+                $notes[] = $note; // Ajout de la note au tableau
             }   
+    
+        // Génération de Likes aléatoires
+        foreach ($notes as $note) {
+            // Chaque note peux recevoir ou pas des likes 
+            if ($faker->boolean(70)) { 
+                // Sélection aléatoire d'utilisateurs qui vont aimer la note
+                $randomUsers = $faker->randomElements($users, $faker->numberBetween(0, count($users)));
+
+                foreach ($randomUsers as $user) {
+                    if ($faker->boolean(50)) { // 50% de chance que l'utilisateur aime la note
+                        $like = new Like();
+                        $like
+                            ->setCreator($user)
+                            ->setNote($note);
+                        
+                        $manager->persist($like);
+                    }
+                }
+            }
         }
+
+               // Génération des Networks 
+               foreach ($users as $user) {
+                if ($faker->boolean(60)) { // 60% de chance qu'un utilisateur ait des réseaux
+                    $numberOfNetworks = $faker->numberBetween(0, 3); // Chaque utilisateur peut avoir entre 0 et 3 réseaux
+    
+                    for ($i = 0; $i < $numberOfNetworks; $i++) {
+                        $network = new Network();
+                        $network
+                            ->setName($faker->company) 
+                            ->setUrl($faker->url) 
+                            ->setCreator($user); 
+                        
+                        $manager->persist($network);
+                    }
+                }
+            }
+
+
+          
         $manager->flush();
     }
 }

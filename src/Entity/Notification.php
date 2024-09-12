@@ -24,7 +24,7 @@ class Notification
     private ?string $type = null;
 
     #[ORM\Column]
-    private ?bool $archived = null;
+    private ?bool $archive = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $created_at = null;
@@ -51,7 +51,7 @@ class Notification
 
     public function __construct() {
         $this->type ="info";
-        $this->archived = false;
+        $this->archive = false;
     }
 
     public function getId(): ?int
@@ -97,12 +97,12 @@ class Notification
 
     public function isArchive(): ?bool
     {
-        return $this->archived;
+        return $this->archive;
     }
 
-    public function setArchive(bool $archived): static
+    public function setArchive(bool $archive): static
     {
-        $this->archived = $archived;
+        $this->archive = $archive;
 
         return $this;
     }
