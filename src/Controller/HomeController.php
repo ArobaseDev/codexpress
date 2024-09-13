@@ -17,8 +17,11 @@ class HomeController extends AbstractController
             ['created_at' => 'DESC' ],  // Trie les notes par date de création
             6  // Limite à 6 notes
         );
+        $totalNotes = $nr->findAll();
+        $totalNotes = count($lastNotes);
         return $this->render('home/index.html.twig', [
-            'lastNotes' => $lastNotes  // Envoie des notes à la vue Twig
+            'lastNotes' => $lastNotes, // Envoie des notes à la vue Twig
+            'totalNotes' => $totalNotes,
         ]);
     }
 }
